@@ -1,0 +1,104 @@
+{
+  "w1_sensor_fusion": [
+    {
+      "ablation": "Kairos-Edge (Predictive TMU, Async Eviction, PDN Pacing ON)",
+      "tbt_p50_s": 0.03,
+      "tbt_p95_s": 0.05,
+      "tbt_p99_s": 0.05,
+      "joules_per_token": 1.0699948890024666,
+      "total_tokens": 45001
+    },
+    {
+      "ablation": "Ablation 1: Reactive TMU (Predictive OFF)",
+      "tbt_p50_s": 0.03,
+      "tbt_p95_s": 0.18,
+      "tbt_p99_s": 0.18,
+      "joules_per_token": 2.964694276025074,
+      "total_tokens": 19462
+    },
+    {
+      "ablation": "Ablation 2: Sync Polling (Async Eviction OFF)",
+      "tbt_p50_s": 0.03,
+      "tbt_p95_s": 0.05,
+      "tbt_p99_s": 0.05,
+      "joules_per_token": 1.0699948890024666,
+      "total_tokens": 45001
+    },
+    {
+      "ablation": "Ablation 3: No PDN Pacing (PDN Pacing OFF)",
+      "tbt_p50_s": 0.08,
+      "tbt_p95_s": 0.1,
+      "tbt_p99_s": 0.1,
+      "joules_per_token": 3.319958002099895,
+      "total_tokens": 20001
+    }
+  ],
+  "w2_conversational": [
+    {
+      "ablation": "Kairos-Edge (Predictive TMU, Async Eviction, PDN Pacing ON)",
+      "tbt_p50_s": 0.05,
+      "tbt_p95_s": 0.07,
+      "tbt_p99_s": 0.07,
+      "joules_per_token": 1.2499950001666613,
+      "total_tokens": 30001
+    },
+    {
+      "ablation": "Ablation 1: Reactive TMU (Predictive OFF)",
+      "tbt_p50_s": 0.05,
+      "tbt_p95_s": 0.2,
+      "tbt_p99_s": 0.2,
+      "joules_per_token": 2.891039740064984,
+      "total_tokens": 16004
+    },
+    {
+      "ablation": "Ablation 2: Sync Polling (Async Eviction OFF)",
+      "tbt_p50_s": 0.05,
+      "tbt_p95_s": 0.07,
+      "tbt_p99_s": 0.07,
+      "joules_per_token": 1.2499950001666613,
+      "total_tokens": 30001
+    },
+    {
+      "ablation": "Ablation 3: No PDN Pacing (PDN Pacing OFF)",
+      "tbt_p50_s": 0.1,
+      "tbt_p95_s": 0.12000000000000001,
+      "tbt_p99_s": 0.12000000000000001,
+      "joules_per_token": 3.3999633363886343,
+      "total_tokens": 16365
+    }
+  ],
+  "w3_mixed_tenant": [
+    {
+      "ablation": "Kairos-Edge (Predictive TMU, Async Eviction, PDN Pacing ON)",
+      "tbt_p50_s": 0.08,
+      "tbt_p95_s": 0.1,
+      "tbt_p99_s": 0.1,
+      "joules_per_token": 2.23997600119994,
+      "total_tokens": 20001
+    },
+    {
+      "ablation": "Ablation 1: Reactive TMU (Predictive OFF)",
+      "tbt_p50_s": 0.08,
+      "tbt_p95_s": 0.22999999999999998,
+      "tbt_p99_s": 0.22999999999999998,
+      "joules_per_token": 4.183700332436283,
+      "total_tokens": 12634
+    },
+    {
+      "ablation": "Ablation 2: Sync Polling (Async Eviction OFF)",
+      "tbt_p50_s": 0.08,
+      "tbt_p95_s": 0.1,
+      "tbt_p99_s": 0.1,
+      "joules_per_token": 2.23997600119994,
+      "total_tokens": 20001
+    },
+    {
+      "ablation": "Ablation 3: No PDN Pacing (PDN Pacing OFF)",
+      "tbt_p50_s": 0.13,
+      "tbt_p95_s": 0.15000000000000002,
+      "tbt_p99_s": 0.15000000000000002,
+      "joules_per_token": 4.889902006532898,
+      "total_tokens": 12858
+    }
+  ]
+}

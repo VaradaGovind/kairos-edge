@@ -1,0 +1,115 @@
+experiment:
+  name: baseline_full_cache
+  seed: 3407
+  output_dir: logs/benchmarks
+  power_budget_file: configs/power_matched_budget.yaml
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  base_url: http://127.0.0.1:8000
+  endpoint: /v1/completions
+  api_key: ""
+
+model:
+  id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  revision: main
+  precision: bf16
+  backend: vllm
+
+runtime:
+  max_tokens: 96
+  temperature: 0.0
+  top_p: 1.0
+  warmup_requests: 2
+  measurement_requests: 8
+  request_timeout_s: 180
+  gpu_mem_poll_interval_s: 0.25
+
+hardware_throttling:
+  board_power_cap_w: 250.0
+  dvfs_step_limit_mv: 25.0
+  thermal_guardrail_c: 85.0
+  thermal_critical_c: 90.0
+
+batch_rules:
+  max_tokens: 96
+  temperature: 0.0
+  top_p: 1.0
+  warmup_requests: 2
+  measurement_requests: 8
+
+kairos_latency_hiding:
+  chunk_size_tokens: 512
+  compute_s_per_token: 0.00035
+  nvme_serialize_s_per_token: 0.00022
+  nvme_setup_latency_s: 0.005
+  decode_horizon_steps: 96
+  pcie_rtt_s: 0.0038
+  pcie_transfer_s_per_mb: 0.00062
+  page_size_tokens: 128
+
+evaluation:
+  weights:
+    ttft: 0.45
+    tpot: 0.45
+    throughput: 0.08
+    power: 0.02
+  targets:
+    ttft_p95_s: 0.90
+    tpot_p95_s: 0.90
+    throughput_tps: 1.20
+    power_proxy_w: 240.0
+  asserts:
+    max_ttft_p95_s: 20.00
+    max_tpot_p95_s: 20.00
+    max_weighted_cost: 20.25
+
+workload:
+  prompts:
+    - Explain why KV cache memory grows with context length in transformer decoding.
+    - Summarize a 3-step strategy to reduce TTFT without harming accuracy.
+    - Given a thermal warning at 85C, describe proactive migration actions for HBM headroom.
+    - Compare compute-bound and memory-bound phases for LLM inference scheduling.
+  expected_answers:
+    - KV cache grows with generated token count because each new token contributes new key/value states.
+    - TTFT can improve through prompt chunking, tighter batching, and overlap of prefill with data movement.
+    - Proactive migration should create destination HBM headroom before transfer, then move hot pages in controlled windows.
+    - Compute-bound phases stress SM compute units while memory-bound phases are dominated by cache and bandwidth pressure.
+
+baseline_profile:
+  name: full_cache
+  description: Baseline contiguous KV cache pool with no chunked prefill.
+  vllm_server_args:
+    gpu_memory_utilization: 0.95
+    max_model_len: 4096
+    max_num_batched_tokens: 2048
+    enable_chunked_prefill: false
+
+fairness:
+  expected:
+    model_id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    model_revision: main
+    precision: bf16
+    baseline_profile_name: full_cache
+    baseline_enable_chunked_prefill: false
+    baseline_gpu_memory_utilization: 0.95
+    baseline_max_num_batched_tokens: 2048
+    hardware_throttling:
+      board_power_cap_w: 250.0
+      dvfs_step_limit_mv: 25.0
+      thermal_guardrail_c: 85.0
+      thermal_critical_c: 90.0
+    batch_rules:
+      max_tokens: 96
+      temperature: 0.0
+      top_p: 1.0
+      warmup_requests: 2
+      measurement_requests: 8
+    workload_hash: 3e1d4e6bdfaa7bd4dfaaed5d9d312cdaecca7c11991f17b1ebcd27dba5ddf5b7
+    workload_settings:
+      max_tokens: 96
+      temperature: 0.0
+      top_p: 1.0
+      warmup_requests: 2
+      measurement_requests: 8

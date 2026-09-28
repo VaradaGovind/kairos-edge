@@ -1,0 +1,78 @@
+experiment:
+  name: w2_conversational
+  seed: 3407
+  output_dir: logs/benchmarks
+  power_budget_file: configs/power_matched_budget.yaml
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  base_url: http://127.0.0.1:8000
+  endpoint: /v1/completions
+  api_key: ""
+
+model:
+  id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  revision: main
+  precision: bf16
+  backend: vllm
+
+runtime:
+  max_tokens: 128
+  temperature: 0.7
+  top_p: 0.95
+  warmup_requests: 2
+  measurement_requests: 16
+  request_timeout_s: 180
+  gpu_mem_poll_interval_s: 0.25
+
+hardware_throttling:
+  board_power_cap_w: 250.0
+  dvfs_step_limit_mv: 25.0
+  thermal_guardrail_c: 85.0
+  thermal_critical_c: 90.0
+
+batch_rules:
+  max_tokens: 128
+  temperature: 0.7
+  top_p: 0.95
+  warmup_requests: 2
+  measurement_requests: 16
+
+kairos_latency_hiding:
+  chunk_size_tokens: 384
+  compute_s_per_token: 0.00035
+  nvme_serialize_s_per_token: 0.00018
+  nvme_setup_latency_s: 0.004
+  decode_horizon_steps: 128
+  pcie_rtt_s: 0.0032
+  pcie_transfer_s_per_mb: 0.00058
+  page_size_tokens: 128
+
+evaluation:
+  weights:
+    ttft: 0.45
+    tpot: 0.45
+    throughput: 0.08
+    power: 0.02
+  targets:
+    ttft_p95_s: 0.85
+    tpot_p95_s: 0.85
+    throughput_tps: 1.25
+    power_proxy_w: 240.0
+  asserts:
+    max_ttft_p95_s: 20.00
+    max_tpot_p95_s: 20.00
+    max_weighted_cost: 2.10
+
+workload:
+  prompts:
+    - User: How do I adjust the cooling fan speed on the edge gateway?
+    - User: What is the current status of the inference node?
+    - User: Can you explain the difference between chunked prefill and standard prefill?
+    - User: Summarize the alert logs from the past hour.
+  expected_answers:
+    - You can adjust the cooling fan speed by writing to the PWM registers in /sys/class/hwmon.
+    - The inference node is currently operating nominally with a 75C average temperature.
+    - Chunked prefill breaks the initial prompt processing into smaller pieces to reduce memory spikes.
+    - 3 alerts for high temperature, 1 alert for network timeout.

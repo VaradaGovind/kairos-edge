@@ -1,0 +1,23 @@
+power_budget:
+  board_power_cap_w: 250.0
+  reference_gpu_model: NVIDIA A100 40GB
+  reference_board_power_cap_w: 250.0
+  dvfs_step_limit_mv: 25.0
+  dvfs_frequency_step_mhz: 30.0
+  thermal_guardrail_c: 85.0
+  thermal_critical_c: 90.0
+  thermal_sensor_poll_hz: 4.0
+  pcie_link_refill_tokens_per_s: 1000.0
+  nvlink_link_refill_tokens_per_s: 1000.0
+  pdn_stability_bounds:
+    max_di_dt_ma_per_us: 150.0
+    max_voltage_droop_mv: 40.0
+    min_supply_voltage_v: 0.92
+  variance_target_pct: 10.0
+  comparison_rules:
+    precision: identical
+    model_id: identical
+    model_revision: identical
+    workload_prompts: identical
+    batch_rules: identical
+    hardware_throttling: identical

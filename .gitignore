@@ -1,0 +1,67 @@
+# ==========================================
+# Kairos-Edge Git Ignore Rules
+# ==========================================
+
+# --- Python & Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+.venv*/
+venv/
+env/
+
+# --- Model Weights & Large Binaries ---
+# Large model binaries (>50MB) must not be tracked in git
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+configs/tinyllama.gguf
+
+# --- External Toolchains & Prebuilt Binaries ---
+.llama_cpp/
+
+# --- Hardware EDA & Simulation Outputs ---
+*.vvp
+*.vcd
+*.fst
+*.out
+*.wlf
+*.fsdb
+*.pb
+*.jou
+*.wop
+.Xil/
+xsim.dir/
+hw_tmu/tb_*.vvp
+hw_kv/*.vvp
+hw_kv/outputs/
+hw_tmu/outputs/
+
+# --- Ephemeral Runtime Logs & Local Telemetry ---
+logs/hardware_inventory/
+logs/baseline_setup/
+logs/emulator/
+logs/benchmarks/
+*.log
+!Images/*.png
+
+# --- IDE & Editor Artifacts ---
+.vscode/
+.idea/
+.specstory/
+*.swp
+*.swo
+*~
+
+# --- OS Metadata ---
+.DS_Store
+Thumbs.db
+desktop.ini

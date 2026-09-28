@@ -1,0 +1,78 @@
+experiment:
+  name: w3_mixed_tenant
+  seed: 3407
+  output_dir: logs/benchmarks
+  power_budget_file: configs/power_matched_budget.yaml
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  base_url: http://127.0.0.1:8000
+  endpoint: /v1/completions
+  api_key: ""
+
+model:
+  id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  revision: main
+  precision: bf16
+  backend: vllm
+
+runtime:
+  max_tokens: 256
+  temperature: 0.2
+  top_p: 0.95
+  warmup_requests: 2
+  measurement_requests: 16
+  request_timeout_s: 180
+  gpu_mem_poll_interval_s: 0.25
+
+hardware_throttling:
+  board_power_cap_w: 250.0
+  dvfs_step_limit_mv: 25.0
+  thermal_guardrail_c: 85.0
+  thermal_critical_c: 90.0
+
+batch_rules:
+  max_tokens: 256
+  temperature: 0.2
+  top_p: 0.95
+  warmup_requests: 2
+  measurement_requests: 16
+
+kairos_latency_hiding:
+  chunk_size_tokens: 384
+  compute_s_per_token: 0.00035
+  nvme_serialize_s_per_token: 0.00018
+  nvme_setup_latency_s: 0.004
+  decode_horizon_steps: 128
+  pcie_rtt_s: 0.0032
+  pcie_transfer_s_per_mb: 0.00058
+  page_size_tokens: 128
+
+evaluation:
+  weights:
+    ttft: 0.35
+    tpot: 0.35
+    throughput: 0.25
+    power: 0.05
+  targets:
+    ttft_p95_s: 1.00
+    tpot_p95_s: 1.00
+    throughput_tps: 3.00
+    power_proxy_w: 240.0
+  asserts:
+    max_ttft_p95_s: 15.00
+    max_tpot_p95_s: 15.00
+    max_weighted_cost: 2.10
+
+workload:
+  prompts:
+    - [TENANT_1_CRITICAL] Anomaly in vibration signature on motor 4. Suggest corrective action immediately.
+    - [TENANT_2_BACKGROUND] Summarize the daily log of system resource utilization from 00:00 to 23:59.
+    - [TENANT_1_CRITICAL] Pressure drop in cooling loop B. Flow rate is 12 L/min. Is this safe?
+    - [TENANT_2_BACKGROUND] Extract key performance metrics from the historical logs of the past week.
+  expected_answers:
+    - Shut down motor 4 immediately and dispatch maintenance crew.
+    - The daily log shows average CPU utilization at 45% and memory at 60%, with a peak at 14:00.
+    - Pressure drop is critical. Minimum safe flow rate is 15 L/min. Trigger failsafe.
+    - Key metrics: 99.9% uptime, average response time 200ms, 5 errors logged.

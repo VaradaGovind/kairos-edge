@@ -1,0 +1,87 @@
+experiment:
+  name: w1_sensor_fusion
+  seed: 3407
+  output_dir: logs/benchmarks
+  power_budget_file: configs/power_matched_budget.yaml
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  base_url: http://127.0.0.1:8000
+  endpoint: /v1/completions
+  api_key: ""
+
+model:
+  id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  revision: main
+  precision: bf16
+  backend: vllm
+
+runtime:
+  max_tokens: 64
+  temperature: 0.0
+  top_p: 1.0
+  warmup_requests: 2
+  measurement_requests: 32
+  request_timeout_s: 180
+  gpu_mem_poll_interval_s: 0.25
+
+hardware_throttling:
+  board_power_cap_w: 250.0
+  dvfs_step_limit_mv: 25.0
+  thermal_guardrail_c: 85.0
+  thermal_critical_c: 90.0
+
+batch_rules:
+  max_tokens: 64
+  temperature: 0.0
+  top_p: 1.0
+  warmup_requests: 2
+  measurement_requests: 32
+
+kairos_latency_hiding:
+  chunk_size_tokens: 384
+  compute_s_per_token: 0.00035
+  nvme_serialize_s_per_token: 0.00018
+  nvme_setup_latency_s: 0.004
+  decode_horizon_steps: 128
+  pcie_rtt_s: 0.0032
+  pcie_transfer_s_per_mb: 0.00058
+  page_size_tokens: 128
+
+evaluation:
+  weights:
+    ttft: 0.40
+    tpot: 0.40
+    throughput: 0.15
+    power: 0.05
+  targets:
+    ttft_p95_s: 0.50
+    tpot_p95_s: 0.50
+    throughput_tps: 5.00
+    power_proxy_w: 240.0
+  asserts:
+    max_ttft_p95_s: 5.00
+    max_tpot_p95_s: 5.00
+    max_weighted_cost: 2.10
+
+workload:
+  prompts:
+    - [SENSOR_FUSION_001] Telemetry stream 1 anomaly detected at frame 8439. Target speed 80 mph. Status?
+    - [SENSOR_FUSION_002] Multi-camera fusion report: Pedestrian detected at 45 degrees, distance 12 meters. Action?
+    - [SENSOR_FUSION_003] LiDAR scan complete. Confidence interval 0.98 for stationary object ahead.
+    - [SENSOR_FUSION_004] Radar and ultrasonic sensors disagree on object velocity. Resolving conflict.
+  expected_answers:
+    - Anomaly logged. Maintaining trajectory.
+    - Braking engaged. Speed reduced to 20 mph.
+    - Object classified as parked vehicle.
+    - Trusting LiDAR over ultrasonic for velocity estimation.
+
+baseline_profile:
+  name: optimized_chunked_prefill
+  description: Static chunked prefill baseline for reduced prefill memory spikes.
+  vllm_server_args:
+    gpu_memory_utilization: 0.92
+    max_model_len: 4096
+    max_num_batched_tokens: 4096
+    enable_chunked_prefill: true
